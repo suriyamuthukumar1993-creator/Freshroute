@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>FreshRoute</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f2f2ed;min-height:100vh;color:#1a1a1a}
+.app{max-width:460px;margin:0 auto;background:#fff;min-height:100vh;padding:1rem 1rem 3rem}
+.screen{display:none}.screen.active{display:block}
+h1{font-size:22px;font-weight:700}.sub{font-size:13px;color:#888;margin-top:3px}
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:12px 0 14px;border-bottom:1px solid #eee;margin-bottom:16px}
+.btn{font-family:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;font-size:13px;border:1px solid #ddd;background:#fff;color:#1a1a1a;transition:background .15s}
+.btn:hover{background:#f2f2ed}
+.btn-primary{background:#1D9E75;border-color:#0F6E56;color:#fff}.btn-primary:hover{background:#0F6E56}
+.btn-wa{background:#25D366;border-color:#128C7E;color:#fff}.btn-wa:hover{background:#1da851}
+.btn-full{width:100%;text-align:center;padding:12px;font-size:14px;font-weight:500}
+.btn-sm{padding:6px 12px;font-size:12px}
+.card{background:#fff;border:1px solid #eee;border-radius:12px;padding:13px 15px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.metric{background:#f2f2ed;border-radius:10px;padding:13px}
+.metric-label{font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.metric-val{font-size:26px;font-weight:700;color:#1a1a1a}
+.metric-sub{font-size:11px;color:#aaa;margin-top:2px}
+/* cohort badges */
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.badge-new{background:#f0efea;color:#5a5955}
+.badge-lead{background:#e6f1fb;color:#185fa5}
+.badge-pricing{background:#faeeda;color:#854f0b}
+.badge-sample{background:#eeedfe;color:#534ab7}
+.badge-approval{background:#fff3cd;color:#856404}
+.badge-contract{background:#e1f5ee;color:#0f6e56}
+.badge-won{background:#d0f0e4;color:#085041}
+.badge-lost{background:#fcebeb;color:#a32d2d}
+/* potential */
+.pot-low{background:#fff3cd;color:#856404;font-size:11px;padding:2px 7px;border-radius:20px;font-weight:600}
+.pot-med{background:#e6f1fb;color:#185fa5;font-size:11px;padding:2px 7px;border-radius:20px;font-weight:600}
+.pot-high{background:#d0f0e4;color:#085041;font-size:11px;padding:2px 7px;border-radius:20px;font-weight:600}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:#555;margin-bottom:5px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;font-size:14px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#1a1a1a;font-family:inherit;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+.field textarea{min-height:80px;resize:vertical}
+.tab-row{display:flex;border-bottom:1px solid #eee;margin-bottom:16px;overflow-x:auto}
+.tab{flex:1;min-width:60px;font-size:12px;padding:10px 6px;cursor:pointer;border:none;background:none;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;text-align:center;font-family:inherit;white-space:nowrap}
+.tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:600}
+.section-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.alert{padding:11px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;line-height:1.5}
+.alert-success{background:#e1f5ee;color:#085041;border:1px solid #b3e6d2}
+.alert-error{background:#fcebeb;color:#a32d2d;border:1px solid #f5c0c0}
+.alert-info{background:#e6f1fb;color:#0c447c;border:1px solid #b8d6f5}
+.alert-warn{background:#fff3cd;color:#856404;border:1px solid #ffd970}
+.geo-box{background:#f2f2ed;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px}
+.stage-bar{display:flex;gap:3px;margin-top:8px}
+.stage-dot{flex:1;height:3px;border-radius:2px;background:#eee}
+.stage-dot.done{background:#1D9E75}.stage-dot.active-dot{background:#e6a817}
+.customer-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f0f0f0;cursor:pointer}
+.customer-row:last-child{border-bottom:none}
+.dist-pill{font-size:11px;background:#e1f5ee;color:#0f6e56;padding:3px 8px;border-radius:20px;white-space:nowrap;font-weight:500}
+.overdue-pill{font-size:11px;background:#fcebeb;color:#a32d2d;padding:2px 7px;border-radius:20px;font-weight:500}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid #eee;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.visit-pill{font-size:11px;background:#f0f0f0;color:#666;padding:2px 7px;border-radius:20px}
+.reached-btn{background:#1D9E75;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-bottom:12px;font-family:inherit}
+.reached-btn:disabled{background:#aaa;cursor:not-allowed}
+.divider{border:none;border-top:1px solid #f0f0f0;margin:14px 0}
+.timeline-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f8f8f8;font-size:12px}
+.timeline-dot{width:8px;height:8px;border-radius:50%;background:#1D9E75;margin-top:4px;flex-shrink:0}
+.stage-time-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── LOGIN ── -->
+<div id="screen-login" class="screen active">
+  <div style="text-align:center;padding:2.5rem 0 2rem">
+    <div style="font-size:40px;color:#1D9E75"><i class="ti ti-salad"></i></div>
+    <h1 style="margin-top:10px">FreshRoute</h1>
+    <div class="sub">Field sales tracker</div>
+  </div>
+  <div id="login-error" class="alert alert-error" style="display:none"></div>
+  <div class="field"><label>Your name</label>
+    <select id="login-rep"><option value="">Loading...</option></select>
+  </div>
+  <div class="field"><label>PIN</label>
+    <input type="password" id="login-pin" placeholder="Enter your PIN" maxlength="6">
+  </div>
+  <button class="btn btn-primary btn-full" onclick="doLogin()">Sign in</button>
+  <div style="margin-top:14px;text-align:center">
+    <button class="btn btn-sm" onclick="showScreen('screen-admin-login')">Admin login →</button>
+  </div>
+</div>
+
+<!-- ── ADMIN LOGIN ── -->
+<div id="screen-admin-login" class="screen">
+  <div class="topnav"><div><h1 style="font-size:16px">Admin access</h1></div><button class="btn btn-sm" onclick="showScreen('screen-login')">← Back</button></div>
+  <div id="admin-login-error" class="alert alert-error" style="display:none"></div>
+  <div class="field"><label>Admin PIN</label><input type="password" id="admin-pin" placeholder="Enter admin PIN"></div>
+  <div style="font-size:12px;color:#888;margin-bottom:14px">Default PIN: <strong>9999</strong></div>
+  <button class="btn btn-primary btn-full" onclick="doAdminLogin()">Enter admin</button>
+</div>
+
+<!-- ── REP VIEW ── -->
+<div id="screen-rep" class="screen">
+  <div class="topnav">
+    <div><div style="font-size:15px;font-weight:600" id="rep-greeting">Hello</div><div class="sub" id="rep-date"></div></div>
+    <button class="btn btn-sm" onclick="doLogout()">Sign out</button>
+  </div>
+  <div class="tab-row">
+    <button class="tab active" onclick="repTab('map',this)"><i class="ti ti-map-2"></i> Map</button>
+    <button class="tab" onclick="repTab('customers',this)"><i class="ti ti-building-store"></i> Customers</button>
+    <button class="tab" onclick="repTab('checkin',this)"><i class="ti ti-map-pin"></i> Check in</button>
+  </div>
+
+  <!-- MAP TAB -->
+  <div id="rep-tab-map">
+    <div class="section-title">Today's follow-ups — tap to navigate</div>
+    <div style="background:#f2f2ed;border-radius:12px;padding:14px;text-align:center;margin-bottom:14px">
+      <div style="font-size:13px;color:#555;margin-bottom:10px">Get location to sort customers by distance</div>
+      <button class="btn" onclick="getGPSForMap()"><i class="ti ti-current-location" style="margin-right:4px"></i>Get my location</button>
+      <div id="map-gps-status" style="font-size:12px;color:#888;margin-top:8px"></div>
+    </div>
+    <div id="today-list"><div style="text-align:center;padding:20px;color:#888;font-size:13px"><span class="spinner"></span>Loading...</div></div>
+  </div>
+
+  <!-- CUSTOMERS TAB -->
+  <div id="rep-tab-customers" style="display:none">
+    <div class="field"><input id="rep-search" placeholder="Search customers..." oninput="filterRepCustomers()" style="width:100%"></div>
+    <div id="all-list"><div style="text-align:center;padding:20px;color:#888;font-size:13px"><span class="spinner"></span>Loading...</div></div>
+  </div>
+
+  <!-- CHECK IN TAB -->
+  <div id="rep-tab-checkin" style="display:none">
+    <div class="section-title">Visit check-in</div>
+
+    <!-- Step 1: GPS -->
+    <div class="geo-box">
+      <div style="font-size:32px;color:#1D9E75;margin-bottom:8px"><i class="ti ti-current-location"></i></div>
+      <div style="font-size:15px;font-weight:600">Step 1 — Get your location</div>
+      <div style="font-size:12px;color:#888;margin-top:5px" id="geo-status-text">Tap below to verify your GPS</div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="getGPS()"><i class="ti ti-location" style="margin-right:4px"></i>Get my location</button>
+    </div>
+
+    <!-- Step 2: Select customer -->
+    <div class="field"><label>Step 2 — Select customer</label>
+      <select id="checkin-customer" onchange="checkProximity()"><option value="">-- select --</option></select>
+    </div>
+    <div id="geo-result" style="display:none"></div>
+
+    <!-- Step 3: Reached shop button -->
+    <div id="reached-shop-section" style="display:none">
+      <hr class="divider">
+      <div class="section-title">Step 3 — Mark arrival</div>
+      <button class="reached-btn" id="reached-btn" onclick="markReachedShop()">
+        <i class="ti ti-map-pin-check" style="margin-right:6px"></i>Reached Shop — Mark arrival
+      </button>
+      <div id="reached-alert" style="display:none"></div>
+    </div>
+
+    <!-- Step 4: Visit form (unlocked after reached shop) -->
+    <div id="visit-form" style="display:none">
+      <hr class="divider">
+      <div class="section-title">Step 4 — Log this visit</div>
+
+      <div class="field"><label>Who did you meet?</label>
+        <select id="who-met">
+          <option value="purchase_manager">Purchase manager</option>
+          <option value="chef">Chef</option>
+          <option value="owner">Owner / Management</option>
+          <option value="finance">Finance team</option>
+          <option value="not_available">Nobody — not available</option>
+          <option value="turned_away">Turned away / security</option>
+        </select>
+      </div>
+
+      <div class="field"><label>Outcome</label>
+        <select id="visit-outcome" onchange="outcomeChanged()">
+          <option value="cold_visit">Visit done — no decision yet (stays in New Customer)</option>
+          <option value="lead_generated">Met customer, pitch done → Lead Generated</option>
+          <option value="sample_requested">Customer wants sample → Sample Requested</option>
+          <option value="approval_pending">Sample done, awaiting approval → Approval Pending</option>
+          <option value="contract_initiated">Contract initiated → Contract Initiated</option>
+          <option value="first_order">First order confirmed → Won / Active 🎉</option>
+          <option value="not_interested">Not interested</option>
+          <option value="lost">Mark as lost</option>
+        </select>
+      </div>
+
+      <!-- Potential — shown when lead_generated -->
+      <div id="potential-section" style="display:none">
+        <div class="field"><label>Customer potential</label>
+          <select id="customer-potential">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Price share — shown when pricing_shared outcome -->
+      <div id="price-share-box" style="display:none">
+        <div class="alert alert-info"><i class="ti ti-info-circle" style="margin-right:4px"></i>Share price list via WhatsApp — recorded automatically</div>
+        <div class="field"><label>WhatsApp number (leave blank to use registered number)</label>
+          <input id="share-mobile-override" placeholder="e.g. 9876543210" type="tel">
+        </div>
+        <button class="btn btn-wa btn-full" style="margin-bottom:14px" onclick="sharePrice()">
+          <i class="ti ti-brand-whatsapp" style="margin-right:6px"></i>Send price list on WhatsApp
+        </button>
+        <div id="price-shared-confirm" style="display:none" class="alert alert-success">✓ Price list shared and recorded</div>
+      </div>
+
+      <div class="field"><label>Next follow-up date</label><input type="date" id="next-followup"></div>
+      <div class="field"><label>Notes</label><textarea id="visit-notes" placeholder="What was discussed? Objections, interest, feedback..."></textarea></div>
+      <div id="save-alert" style="display:none"></div>
+      <button class="btn btn-primary btn-full" id="save-btn" onclick="saveVisit()">Save visit log</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN VIEW ── -->
+<div id="screen-admin" class="screen">
+  <div class="topnav">
+    <div><div style="font-size:15px;font-weight:600">Admin — FreshRoute</div></div>
+    <button class="btn btn-sm" onclick="doLogout()">Sign out</button>
+  </div>
+  <div class="tab-row">
+    <button class="tab active" onclick="adminTab('dashboard',this)">Dashboard</button>
+    <button class="tab" onclick="adminTab('customers',this)">Customers</button>
+    <button class="tab" onclick="adminTab('add',this)">Add</button>
+    <button class="tab" onclick="adminTab('pricelist',this)">Pricing</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="admin-tab-dashboard">
+    <div id="dashboard-content"><div style="text-align:center;padding:24px;color:#888"><span class="spinner"></span>Loading...</div></div>
+  </div>
+
+  <!-- CUSTOMERS -->
+  <div id="admin-tab-customers" style="display:none">
+    <div class="field"><input id="admin-search" placeholder="Search by name or rep..." oninput="filterAdmin()" style="width:100%"></div>
+    <div class="field">
+      <select id="admin-cohort-filter" onchange="filterAdmin()" style="width:100%">
+        <option value="">All cohorts</option>
+        <option>New Customer</option>
+        <option>Lead Generated</option>
+        <option>Pricing Shared</option>
+        <option>Sample Requested</option>
+        <option>Approval Pending</option>
+        <option>Contract Initiated</option>
+        <option>Won / Active</option>
+        <option>Lost</option>
+      </select>
+    </div>
+    <div id="admin-list"><div style="text-align:center;padding:20px;color:#888"><span class="spinner"></span>Loading...</div></div>
+  </div>
+
+  <!-- ADD CUSTOMER -->
+  <div id="admin-tab-add" style="display:none">
+    <div class="section-title">Add new customer</div>
+    <div id="add-alert" style="display:none"></div>
+    <div class="field"><label>Business name *</label><input id="ac-name" placeholder="e.g. The Green Vine Cafe"></div>
+    <div class="field"><label>Mobile number</label><input id="ac-mobile" placeholder="e.g. 9876543210" type="tel"></div>
+    <div class="field"><label>Assign to rep *</label><select id="ac-rep"><option value="">-- select rep --</option></select></div>
+    <div class="field"><label>Latitude</label><input id="ac-lat" placeholder="e.g. 12.9716" type="number" step="any"></div>
+    <div class="field"><label>Longitude</label><input id="ac-lng" placeholder="e.g. 77.5946" type="number" step="any"></div>
+    <div class="alert alert-info" style="margin-bottom:14px"><i class="ti ti-info-circle" style="margin-right:4px"></i>Get lat/lng: open Google Maps → right-click the location → copy the coordinates shown</div>
+    <button class="btn btn-primary btn-full" onclick="addCustomer()">Add customer</button>
+  </div>
+
+  <!-- PRICE LIST -->
+  <div id="admin-tab-pricelist" style="display:none">
+    <div class="section-title">Current price list</div>
+    <div id="pl-current" class="card" style="margin-bottom:20px"><span class="spinner"></span></div>
+    <div class="section-title">Upload new version</div>
+    <div class="field"><label>Google Drive PDF link</label><input id="pl-link" placeholder="https://drive.google.com/file/..."></div>
+    <div style="font-size:12px;color:#888;margin-bottom:14px;background:#f2f2ed;padding:10px;border-radius:8px;line-height:1.6">
+      1. Upload PDF to Google Drive<br>
+      2. Right-click → Share → Anyone with the link<br>
+      3. Copy link and paste above
+    </div>
+    <button class="btn btn-primary btn-full" onclick="updatePL()">Upload new price list</button>
+    <div id="pl-alert" style="display:none;margin-top:12px"></div>
+  </div>
+</div>
+
+</div><!-- end .app -->
+
+<script>
+const API = 'https://script.google.com/a/macros/ninjacart.com/s/AKfycbxSJ6fOUmJMOZeTtbzC6JCmsH9B-3WPZc0LgT3lS7cuSR4cORuYTvjPoEENLlteFi2m9g/exec';
+const TODAY = new Date().toISOString().slice(0,10);
+const STAGES = ['New Customer','Lead Generated','Pricing Shared','Sample Requested','Approval Pending','Contract Initiated','Won / Active'];
+
+let currentRep=null, allReps=[], repCustomers=[], adminCustomers=[], userGPS=null, priceList=null, reachedShopDone=false, currentCheckinId=null;
+
+async function api(p){
+  const r = await fetch(API+'?'+new URLSearchParams(p), {redirect:'follow'});
+  return r.json();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showAlert(id,msg,type){
+  const el=document.getElementById(id);
+  el.className='alert alert-'+type;
+  el.textContent=msg;
+  el.style.display='block';
+  if(type==='success') setTimeout(()=>el.style.display='none',3000);
+}
+
+function stageBadge(s){
+  const m={'New Customer':'new','Lead Generated':'lead','Pricing Shared':'pricing','Sample Requested':'sample','Approval Pending':'approval','Contract Initiated':'contract','Won / Active':'won','Lost':'lost'};
+  return `<span class="badge badge-${m[s]||'new'}">${s||'New Customer'}</span>`;
+}
+
+function potBadge(p){
+  if(!p) return '';
+  const m={Low:'pot-low',Medium:'pot-med',High:'pot-high'};
+  return `<span class="${m[p]||'pot-low'}">${p}</span>`;
+}
+
+function stageBar(stage){
+  const idx=STAGES.indexOf(stage);
+  return '<div class="stage-bar">'+STAGES.map((s,i)=>`<div class="stage-dot ${i<idx?'done':i===idx?'active-dot':''}"></div>`).join('')+'</div>';
+}
+
+function distM(a,b,c,d){
+  const R=6371000,dL=(c-a)*Math.PI/180,dl=(d-b)*Math.PI/180;
+  const x=Math.sin(dL/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dl/2)**2;
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+
+function fmtDist(d){ return d<1000?Math.round(d)+'m':(d/1000).toFixed(1)+'km'; }
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init(){
+  try{
+    allReps = await api({action:'getReps'});
+    const sel=document.getElementById('login-rep');
+    sel.innerHTML='<option value="">-- select your name --</option>';
+    allReps.filter(r=>r.rep_name!=='Admin').forEach(r=>sel.innerHTML+=`<option value="${r.rep_name}" data-pin="${r.pin}">${r.rep_name}</option>`);
+    const ar=document.getElementById('ac-rep');
+    ar.innerHTML='<option value="">-- select rep --</option>';
+    allReps.filter(r=>r.rep_name!=='Admin').forEach(r=>ar.innerHTML+=`<option value="${r.rep_name}">${r.rep_name}</option>`);
+  }catch(e){
+    document.getElementById('login-rep').innerHTML='<option>Could not load — check internet</option>';
+  }
+  document.getElementById('rep-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('next-followup').value=new Date(Date.now()+86400000*3).toISOString().slice(0,10);
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+function doLogin(){
+  const sel=document.getElementById('login-rep');
+  const pin=document.getElementById('login-pin').value;
+  if(!sel.value){showAlert('login-error','Please select your name','error');return;}
+  if(sel.options[sel.selectedIndex].dataset.pin!==pin){showAlert('login-error','Incorrect PIN','error');return;}
+  currentRep=sel.value;
+  document.getElementById('rep-greeting').textContent='Hello, '+currentRep;
+  document.getElementById('login-error').style.display='none';
+  showScreen('screen-rep');
+  loadRepData();
+}
+
+function doAdminLogin(){
+  const pin=document.getElementById('admin-pin').value;
+  const ar=allReps.find(r=>r.rep_name==='Admin');
+  if(pin!==(ar?ar.pin:'9999')){showAlert('admin-login-error','Incorrect PIN','error');return;}
+  showScreen('screen-admin');
+  loadDashboard(); loadAdminCustomers(); loadPL();
+}
+
+function doLogout(){
+  currentRep=null; repCustomers=[]; userGPS=null; reachedShopDone=false; currentCheckinId=null;
+  document.getElementById('login-pin').value='';
+  document.getElementById('admin-pin').value='';
+  showScreen('screen-login');
+}
+
+// ── REP TABS ──────────────────────────────────────────────────────────────────
+function repTab(tab,el){
+  document.querySelectorAll('#screen-rep .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['map','customers','checkin'].forEach(t=>document.getElementById('rep-tab-'+t).style.display=t===tab?'block':'none');
+  if(tab==='map') renderToday();
+  if(tab==='customers') renderAll();
+  if(tab==='checkin'){populateCheckin(); resetCheckinForm();}
+}
+
+async function loadRepData(){
+  try{
+    repCustomers=await api({action:'getCustomers',rep_name:currentRep});
+    renderToday();
+  }catch(e){
+    document.getElementById('today-list').innerHTML='<div class="alert alert-error">Could not load customers</div>';
+  }
+}
+
+// ── MAP ───────────────────────────────────────────────────────────────────────
+function renderToday(){
+  const el=document.getElementById('today-list');
+  const overdue=repCustomers.filter(c=>c.next_followup_date&&c.next_followup_date<TODAY&&c.current_stage!=='Won / Active'&&c.current_stage!=='Lost');
+  const due=repCustomers.filter(c=>c.next_followup_date===TODAY);
+  const nodate=repCustomers.filter(c=>!c.next_followup_date&&c.current_stage!=='Won / Active'&&c.current_stage!=='Lost');
+  let list=[...overdue,...due,...nodate];
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:24px;color:#888;font-size:13px">No follow-ups scheduled today</div>';return;}
+  if(userGPS) list.sort((a,b)=>{
+    const dA=a.lat&&a.lng?distM(userGPS.lat,userGPS.lng,parseFloat(a.lat),parseFloat(a.lng)):999999;
+    const dB=b.lat&&b.lng?distM(userGPS.lat,userGPS.lng,parseFloat(b.lat),parseFloat(b.lng)):999999;
+    return dA-dB;
+  });
+  el.innerHTML=list.map(c=>{
+    const io=c.next_followup_date&&c.next_followup_date<TODAY;
+    const d=userGPS&&c.lat&&c.lng?distM(userGPS.lat,userGPS.lng,parseFloat(c.lat),parseFloat(c.lng)):null;
+    return `<div class="customer-row" onclick="openMaps('${c.lat}','${c.lng}','${c.name}')">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+        <div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
+          ${stageBadge(c.current_stage||'New Customer')}
+          ${io?'<span class="overdue-pill">Overdue</span>':''}
+          ${c.potential?potBadge(c.potential):''}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        ${d!==null?`<span class="dist-pill">${fmtDist(d)}</span>`:''}
+        <i class="ti ti-navigation" style="font-size:20px;color:#1D9E75"></i>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getGPSForMap(){
+  document.getElementById('map-gps-status').innerHTML='<span class="spinner"></span>Getting location...';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userGPS={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    document.getElementById('map-gps-status').textContent='✓ Location found — sorted by distance';
+    renderToday();
+  },()=>{
+    document.getElementById('map-gps-status').textContent='Could not get location — allow access in browser';
+  },{enableHighAccuracy:true,timeout:10000});
+}
+
+function openMaps(lat,lng,name){
+  if(!lat||!lng){alert('No location saved for '+name+'. Ask admin to add lat/lng.');return;}
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`,'_blank');
+}
+
+// ── ALL CUSTOMERS ─────────────────────────────────────────────────────────────
+function renderAll(){
+  const el=document.getElementById('all-list');
+  const q=(document.getElementById('rep-search')||{value:''}).value.toLowerCase();
+  const list=repCustomers.filter(c=>!q||c.name.toLowerCase().includes(q));
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:24px;color:#888;font-size:13px">No customers assigned yet</div>';return;}
+  el.innerHTML=list.map(c=>`
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-size:14px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</div>
+        ${stageBadge(c.current_stage||'New Customer')}
+      </div>
+      <div style="font-size:12px;color:#888;margin-top:5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        ${c.mobile||'No mobile'} · <span class="visit-pill">${c.visit_count||0} visits</span>
+        ${c.potential?potBadge(c.potential):''}
+      </div>
+      ${c.next_followup_date?`<div style="font-size:11px;color:${c.next_followup_date<TODAY?'#a32d2d':'#aaa'};margin-top:5px">${c.next_followup_date<TODAY?'⚠ Overdue: ':'Next: '}${c.next_followup_date}</div>`:''}
+      ${stageBar(c.current_stage||'New Customer')}
+    </div>`).join('');
+}
+
+function filterRepCustomers(){ renderAll(); }
+
+// ── CHECK IN ──────────────────────────────────────────────────────────────────
+function resetCheckinForm(){
+  reachedShopDone=false; currentCheckinId=null;
+  document.getElementById('geo-result').style.display='none';
+  document.getElementById('reached-shop-section').style.display='none';
+  document.getElementById('visit-form').style.display='none';
+  document.getElementById('price-share-box').style.display='none';
+  document.getElementById('potential-section').style.display='none';
+  document.getElementById('price-shared-confirm').style.display='none';
+  document.getElementById('visit-notes').value='';
+  document.getElementById('visit-outcome').value='cold_visit';
+  document.getElementById('reached-btn').disabled=false;
+  document.getElementById('reached-btn').textContent='Reached Shop — Mark arrival';
+  const sel=document.getElementById('checkin-customer');
+  if(sel) sel.value='';
+}
+
+function populateCheckin(){
+  const sel=document.getElementById('checkin-customer');
+  sel.innerHTML='<option value="">-- select customer --</option>';
+  repCustomers.forEach(c=>sel.innerHTML+=`<option value="${c.customer_id}" data-lat="${c.lat||''}" data-lng="${c.lng||''}" data-mobile="${c.mobile||''}" data-name="${c.name}">${c.name}</option>`);
+}
+
+function getGPS(){
+  document.getElementById('geo-status-text').innerHTML='<span class="spinner"></span>Getting location...';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userGPS={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    document.getElementById('geo-status-text').textContent=`✓ ${userGPS.lat.toFixed(5)}, ${userGPS.lng.toFixed(5)}`;
+    checkProximity();
+  },()=>{
+    document.getElementById('geo-status-text').textContent='Could not get location — allow access';
+  },{enableHighAccuracy:true,timeout:10000});
+}
+
+function checkProximity(){
+  const sel=document.getElementById('checkin-customer');
+  const opt=sel.options[sel.selectedIndex];
+  const res=document.getElementById('geo-result');
+  const rsSection=document.getElementById('reached-shop-section');
+  if(!sel.value){res.style.display='none';rsSection.style.display='none';return;}
+  if(!userGPS){res.className='alert alert-warn';res.textContent='Get your location first (Step 1)';res.style.display='block';rsSection.style.display='none';return;}
+  const cLat=parseFloat(opt.dataset.lat),cLng=parseFloat(opt.dataset.lng);
+  currentCheckinId=sel.value;
+  if(!cLat||!cLng){
+    res.className='alert alert-info';res.textContent='No location saved — check-in allowed';res.style.display='block';
+    rsSection.style.display='block';return;
+  }
+  const d=distM(userGPS.lat,userGPS.lng,cLat,cLng);
+  res.style.display='block';
+  if(d<=100){
+    res.className='alert alert-success';
+    res.innerHTML=`<i class="ti ti-circle-check" style="margin-right:4px"></i>Verified — you are ${Math.round(d)}m from this customer`;
+    rsSection.style.display='block';
+  }else{
+    res.className='alert alert-error';
+    res.innerHTML=`<i class="ti ti-circle-x" style="margin-right:4px"></i>You are ${fmtDist(d)} away — must be within 100m`;
+    rsSection.style.display='none';
+    document.getElementById('visit-form').style.display='none';
+  }
+}
+
+async function markReachedShop(){
+  if(!currentCheckinId){showAlert('reached-alert','Select a customer first','error');return;}
+  const btn=document.getElementById('reached-btn');
+  btn.disabled=true; btn.textContent='Marking arrival...';
+  try{
+    const r=await api({action:'reachedShop',customer_id:currentCheckinId});
+    if(r.success){
+      reachedShopDone=true;
+      btn.textContent='✓ Arrived at '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('reached-alert').className='alert alert-success';
+      document.getElementById('reached-alert').textContent='Arrival time captured — now log your visit below';
+      document.getElementById('reached-alert').style.display='block';
+      document.getElementById('visit-form').style.display='block';
+    }
+  }catch(e){
+    btn.disabled=false; btn.textContent='Reached Shop — Mark arrival';
+    showAlert('reached-alert','Error — try again','error');
+  }
+}
+
+function outcomeChanged(){
+  const v=document.getElementById('visit-outcome').value;
+  document.getElementById('potential-section').style.display=v==='lead_generated'?'block':'none';
+  document.getElementById('price-share-box').style.display=v==='pricing_shared'?'block':'none';
+}
+
+async function sharePrice(){
+  if(!priceList) priceList=await api({action:'getPriceList'});
+  const sel=document.getElementById('checkin-customer');
+  const opt=sel.options[sel.selectedIndex];
+  const overrideMobile=document.getElementById('share-mobile-override').value.trim();
+  const mobile=overrideMobile||opt.dataset.mobile;
+  if(!mobile){alert('No mobile number — enter one in the field above');return;}
+  const msg=encodeURIComponent(`Hi ${opt.dataset.name},\n\nPlease find our monthly fresh produce price list here:\n${priceList.pdf_link||'[Admin has not set price list link yet]'}\n\nDo let us know if the prices work for you — happy to arrange a sample.\n\n— ${currentRep}, FreshRoute`);
+  window.open(`https://wa.me/91${mobile}?text=${msg}`,'_blank');
+  await api({action:'logPriceShare',customer_id:sel.value,rep_name:currentRep,shared_via:'whatsapp',pdf_version:priceList.version||1,mobile_used:mobile});
+  document.getElementById('price-shared-confirm').style.display='block';
+}
+
+async function saveVisit(){
+  const sel=document.getElementById('checkin-customer');
+  if(!sel.value){showAlert('save-alert','Select a customer first','error');return;}
+  if(!userGPS){showAlert('save-alert','Verify GPS location first','error');return;}
+  if(!reachedShopDone){showAlert('save-alert','Mark "Reached Shop" before saving visit','error');return;}
+  const btn=document.getElementById('save-btn');
+  btn.disabled=true; btn.textContent='Saving...';
+  try{
+    await api({
+      action:'logVisit',
+      customer_id:sel.value,
+      rep_name:currentRep,
+      gps_lat:userGPS.lat,
+      gps_lng:userGPS.lng,
+      who_met:document.getElementById('who-met').value,
+      outcome:document.getElementById('visit-outcome').value,
+      next_followup:document.getElementById('next-followup').value,
+      notes:document.getElementById('visit-notes').value,
+      potential:document.getElementById('customer-potential').value
+    });
+    showAlert('save-alert','Visit saved successfully!','success');
+    await loadRepData();
+    setTimeout(()=>resetCheckinForm(),1500);
+  }catch(e){ showAlert('save-alert','Error saving — try again','error'); }
+  btn.disabled=false; btn.textContent='Save visit log';
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
+function adminTab(tab,el){
+  document.querySelectorAll('#screen-admin .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['dashboard','customers','add','pricelist'].forEach(t=>document.getElementById('admin-tab-'+t).style.display=t===tab?'block':'none');
+}
+
+async function loadDashboard(){
+  try{
+    const d=await api({action:'getDashboard'});
+    const stages=d.stages||{};
+    const total=d.totalCustomers||0;
+    const won=stages['Won / Active']||0;
+    const active=Object.entries(stages).filter(([s])=>s!=='Won / Active'&&s!=='Lost').reduce((a,[,v])=>a+v,0);
+    const repRows=Object.entries(d.repVisitsToday||{}).map(([r,v])=>`<div class="stage-time-row"><span>${r}</span><span style="font-weight:600">${v} visits today</span></div>`).join('');
+    const avgRows=Object.entries(d.avgDaysPerStage||{}).map(([s,v])=>`<div class="stage-time-row">${stageBadge(s)}<span style="font-weight:600;color:#888">${v} days avg</span></div>`).join('');
+
+    document.getElementById('dashboard-content').innerHTML=`
+      <div class="metric-grid">
+        <div class="metric"><div class="metric-label">Total customers</div><div class="metric-val">${total}</div></div>
+        <div class="metric"><div class="metric-label">Active pipeline</div><div class="metric-val">${active}</div></div>
+        <div class="metric"><div class="metric-label">Won / Active</div><div class="metric-val" style="color:#1D9E75">${won}</div></div>
+        <div class="metric"><div class="metric-label">Overdue follow-ups</div><div class="metric-val" style="color:${d.overdue>0?'#a32d2d':'#1a1a1a'}">${d.overdue||0}</div></div>
+        <div class="metric"><div class="metric-label">Visits today</div><div class="metric-val">${d.todayVisits||0}</div></div>
+        <div class="metric"><div class="metric-label">Total visits</div><div class="metric-val">${d.totalVisits||0}</div></div>
+      </div>
+
+      <div class="section-title">Cohort pipeline</div>
+      ${STAGES.concat(['Lost']).map(s=>`
+        <div class="stage-time-row">${stageBadge(s)}<span style="font-weight:600">${stages[s]||0}</span></div>`).join('')}
+
+      ${repRows?`<hr class="divider"><div class="section-title">Rep activity today</div>${repRows}`:''}
+      ${avgRows?`<hr class="divider"><div class="section-title">Avg days per stage</div>${avgRows}`:''}
+    `;
+  }catch(e){
+    document.getElementById('dashboard-content').innerHTML='<div class="alert alert-error">Could not load dashboard</div>';
+  }
+}
+
+async function loadAdminCustomers(){
+  try{adminCustomers=await api({action:'getCustomers'});renderAdmin(adminCustomers);}catch(e){}
+}
+
+function filterAdmin(){
+  const q=document.getElementById('admin-search').value.toLowerCase();
+  const cohort=document.getElementById('admin-cohort-filter').value;
+  renderAdmin(adminCustomers.filter(c=>
+    (!q||c.name.toLowerCase().includes(q)||(c.assigned_rep||'').toLowerCase().includes(q))&&
+    (!cohort||c.current_stage===cohort)
+  ));
+}
+
+function renderAdmin(list){
+  const el=document.getElementById('admin-list');
+  if(!list.length){el.innerHTML='<div style="padding:24px;text-align:center;color:#888;font-size:13px">No customers found</div>';return;}
+  el.innerHTML=list.map(c=>`
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-size:14px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</div>
+        ${stageBadge(c.current_stage||'New Customer')}
+      </div>
+      <div style="font-size:12px;color:#888;margin-top:5px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        Rep: <strong>${c.assigned_rep||'—'}</strong> · <span class="visit-pill">${c.visit_count||0} visits</span>
+        ${c.potential?potBadge(c.potential):''}
+      </div>
+      ${c.mobile?`<div style="font-size:12px;color:#aaa;margin-top:3px">${c.mobile}</div>`:''}
+      ${c.next_followup_date?`<div style="font-size:11px;color:${c.next_followup_date<TODAY?'#a32d2d':'#aaa'};margin-top:4px">${c.next_followup_date<TODAY?'⚠ Overdue: ':'Next: '}${c.next_followup_date}</div>`:''}
+      ${c.reached_shop_at?`<div style="font-size:11px;color:#1D9E75;margin-top:4px"><i class="ti ti-map-pin-check" style="font-size:11px"></i> Last arrived: ${new Date(c.reached_shop_at).toLocaleString('en-IN')}</div>`:''}
+    </div>`).join('');
+}
+
+async function addCustomer(){
+  const name=document.getElementById('ac-name').value.trim();
+  const rep=document.getElementById('ac-rep').value;
+  if(!name||!rep){showAlert('add-alert','Name and rep are required','error');return;}
+  const btn=document.querySelector('#admin-tab-add .btn-primary');
+  btn.disabled=true; btn.textContent='Adding...';
+  try{
+    await api({action:'addCustomer',name,mobile:document.getElementById('ac-mobile').value,assigned_rep:rep,lat:document.getElementById('ac-lat').value,lng:document.getElementById('ac-lng').value});
+    showAlert('add-alert','Customer added successfully!','success');
+    ['ac-name','ac-mobile','ac-lat','ac-lng'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('ac-rep').value='';
+    loadAdminCustomers();
+  }catch(e){showAlert('add-alert','Error adding customer','error');}
+  btn.disabled=false; btn.textContent='Add customer';
+}
+
+async function loadPL(){
+  try{
+    priceList=await api({action:'getPriceList'});
+    document.getElementById('pl-current').innerHTML=priceList.error?
+      '<div style="font-size:13px;color:#888">No price list uploaded yet</div>':
+      `<div style="font-size:12px;color:#888;margin-bottom:8px">Version ${priceList.version} · Uploaded ${priceList.uploaded_date} by ${priceList.uploaded_by||'Admin'}</div>
+       <a href="${priceList.pdf_link}" target="_blank" style="font-size:13px;color:#185fa5;display:flex;align-items:center;gap:6px"><i class="ti ti-file-type-pdf"></i>View current price list PDF</a>`;
+  }catch(e){}
+}
+
+async function updatePL(){
+  const link=document.getElementById('pl-link').value.trim();
+  if(!link){showAlert('pl-alert','Paste a Google Drive link first','error');return;}
+  const version=priceList&&!priceList.error?(parseInt(priceList.version)||1)+1:1;
+  try{
+    await api({action:'updatePriceList',pdf_link:link,version,uploaded_by:'Admin'});
+    showAlert('pl-alert','Price list updated! Reps will share this version going forward.','success');
+    document.getElementById('pl-link').value='';
+    priceList={pdf_link:link,version,uploaded_date:TODAY,uploaded_by:'Admin'};
+    loadPL();
+  }catch(e){showAlert('pl-alert','Error — try again','error');}
+}
+
+async function loadPL(){
+  try{
+    priceList=await api({action:'getPriceList'});
+    document.getElementById('pl-current').innerHTML=priceList.error?
+      '<div style="font-size:13px;color:#888">No price list uploaded yet</div>':
+      `<div style="font-size:12px;color:#888;margin-bottom:8px">Version ${priceList.version} · Uploaded ${priceList.uploaded_date}</div>
+       <a href="${priceList.pdf_link}" target="_blank" style="font-size:13px;color:#185fa5"><i class="ti ti-file-type-pdf" style="margin-right:4px"></i>View current price list PDF</a>`;
+  }catch(e){}
+}
+
+init();
+</script>
+</body>
+</html>
